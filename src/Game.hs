@@ -12,7 +12,7 @@ import Collision
 initGame :: Game
 initGame = Game
     { gTime   = 0
-    , gBricks = initBrickMap
+    , gBricks = initBrickMap 11 6 25 64 12 4 800 600
     , gPaddle = initPaddle
     , gBall   = initBall
     , gScore  = 0

@@ -24,8 +24,11 @@ data BrickMap = BrickMap
     { bmBricks  :: M.Map (Int, Int) Int
     , bmNumX    :: !Int
     , bmNumY    :: !Int
+    , bmX       :: !Float
+    , bmY       :: !Float
     , bmWidth   :: !Float
     , bmHeight  :: !Float
+    , bmSep     :: !Float
     }
 
 data Paddle = Paddle
