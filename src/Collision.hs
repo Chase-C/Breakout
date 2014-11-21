@@ -22,7 +22,7 @@ checkPaddleCollision paddle ball
 checkBricksCollision :: BrickMap -> Ball -> Collision
 checkBricksCollision brickMap ball = NoCollision
 
-mergeCollision :: Collision -> Collision -> Collision
-mergeCollision col NoCollision = col
-mergeCollision NoCollision col = col
-mergeCollision col _           = col
+collisionMerge :: Collision -> Collision -> Collision
+collisionMerge col NoCollision = col
+collisionMerge NoCollision col = col
+collisionMerge col _           = col

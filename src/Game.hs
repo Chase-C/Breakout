@@ -56,6 +56,6 @@ update dt game = game
     }
     where paddleCol = checkPaddleCollision (gPaddle game) (gBall game)
           bricksCol = checkBricksCollision (gBricks game) (gBall game)
-          ball      = updateBall   dt (gBall game) $ mergeCollision paddleCol bricksCol
+          ball      = updateBall   dt (gBall game) $ collisionMerge paddleCol bricksCol
           bricks    = updateBricks dt (gBricks game) bricksCol
           paddle    = updatePaddle dt (gPaddle game)
