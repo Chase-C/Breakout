@@ -10,7 +10,7 @@ checkPaddleCollision paddle ball
     | collision = Collision
                   { cBrick    = (0, 0)
                   , cVertical = False
-                  , cVelMod   = dx / 2
+                  , cVelMod   = (dx - (bDX ball)) / 2
                   }
     | otherwise = NoCollision
     where (x1, y1, dy, r)    = (bX ball, bY ball, bDY ball, bRadius ball)
@@ -25,13 +25,13 @@ checkPaddleCollision paddle ball
 checkBricksCollision :: BrickMap -> Ball -> Collision
 checkBricksCollision brickMap ball
     | validBucket =
-        let baseX = (bmX brickMap) + ((fromIntegral xBucket) * (bmWidth  brickMap))
-            baseY = (bmY brickMap) + ((fromIntegral yBucket) * (bmHeight brickMap))
+        let baseX = (bmX brickMap) + ((fromIntegral xBucket) * width)
+            baseY = (bmY brickMap) + ((fromIntegral yBucket) * height)
             relX2 = (bX ball) - baseX
             relY2 = (bY ball) - baseY
             m     = (bDY ball) / (bDX ball)
             b     = relY2 - (m * relX2)
-            yInt  = (m * baseX) + b
+            yInt  = (m * (if (bDX ball) > 0 then baseX else baseX + width)) + b
         in  Collision
             { cBrick    = (xBucket + 1, yBucket + 1)
             , cVertical = (yInt > 0) && (yInt < bmHeight brickMap)
@@ -40,8 +40,10 @@ checkBricksCollision brickMap ball
     | otherwise   = NoCollision
     where relX        = (bX ball) - (bmX brickMap)
           relY        = (bY ball) - (bmY brickMap)
-          xBucket     = floor $ relX / (bmWidth  brickMap + bmSep brickMap)
-          yBucket     = floor $ relY / (bmHeight brickMap + bmSep brickMap)
+          width       = bmWidth  brickMap + bmSep brickMap
+          height      = bmHeight brickMap + bmSep brickMap
+          xBucket     = floor $ relX / width
+          yBucket     = floor $ relY / height
           validBucket = (relX >= 0) && (relY >= 0)
                         && (xBucket < bmNumX brickMap) && (yBucket < bmNumY brickMap)
                         && (fromMaybe 0 (M.lookup (xBucket + 1, yBucket + 1) (bmBricks brickMap)) /= 0)
