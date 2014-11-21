@@ -1,11 +1,14 @@
 module Collision where
 
+import Data.Maybe
+import qualified Data.Map.Strict as M
+
 import Types
 
 checkPaddleCollision :: Paddle -> Ball -> Collision
 checkPaddleCollision paddle ball
     | collision = Collision
-                  { cBrick    = Nothing
+                  { cBrick    = (0, 0)
                   , cVertical = False
                   , cVelMod   = dx / 2
                   }
@@ -20,7 +23,28 @@ checkPaddleCollision paddle ball
                                && dy < 0
 
 checkBricksCollision :: BrickMap -> Ball -> Collision
-checkBricksCollision brickMap ball = NoCollision
+checkBricksCollision brickMap ball
+    | validBucket =
+        let baseX = (bmX brickMap) + ((fromIntegral xBucket) * (bmWidth  brickMap))
+            baseY = (bmY brickMap) + ((fromIntegral yBucket) * (bmHeight brickMap))
+            relX2 = (bX ball) - baseX
+            relY2 = (bY ball) - baseY
+            m     = (bDY ball) / (bDX ball)
+            b     = relY2 - (m * relX2)
+            yInt  = (m * baseX) + b
+        in  Collision
+            { cBrick    = (xBucket + 1, yBucket + 1)
+            , cVertical = (yInt > 0) && (yInt < bmHeight brickMap)
+            , cVelMod   = 0
+            }
+    | otherwise   = NoCollision
+    where relX        = (bX ball) - (bmX brickMap)
+          relY        = (bY ball) - (bmY brickMap)
+          xBucket     = floor $ relX / (bmWidth  brickMap + bmSep brickMap)
+          yBucket     = floor $ relY / (bmHeight brickMap + bmSep brickMap)
+          validBucket = (relX >= 0) && (relY >= 0)
+                        && (xBucket < bmNumX brickMap) && (yBucket < bmNumY brickMap)
+                        && (fromMaybe 0 (M.lookup (xBucket + 1, yBucket + 1) (bmBricks brickMap)) /= 0)
 
 collisionMerge :: Collision -> Collision -> Collision
 collisionMerge col NoCollision = col

@@ -6,7 +6,7 @@ type Time = Float
 
 data Collision = NoCollision
                | Collision
-    { cBrick    :: Maybe (Int, Int)
+    { cBrick    :: !(Int, Int)
     , cVertical :: !Bool
     , cVelMod   :: !Float
     }
