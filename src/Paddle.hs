@@ -5,21 +5,21 @@ import Graphics.Gloss.Data.Color
 
 import Types
 
-initPaddle :: Paddle
-initPaddle = Paddle
-    { pX      = 400
+initPaddle :: Float -> Paddle
+initPaddle w = Paddle
+    { pX      = w / 2
     , pY      = 32
     , pDX     = 0
     , pDDX    = 0
     , pLength = 64
-    , pHeight = 4
+    , pHeight = 8
     }
 
-updatePaddle :: Time -> Paddle -> Paddle
-updatePaddle dt paddle =
-    let newDx = (dt * ddx) + if (x > (800 - hl) && dx > 0) || (x < hl && dx < 0) then 0.8 * (-dx) else dx
+updatePaddle :: Paddle -> Paddle
+updatePaddle paddle =
+    let newDx = ddx + if (x > (800 - hl) && dx > 0) || (x < hl && dx < 0) then 0.8 * (-dx) else dx
     in  paddle
-        { pX  = x + (dt * newDx)
+        { pX  = x + newDx
         , pDX = 0.9 * newDx
         }
     where x   = pX paddle

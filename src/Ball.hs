@@ -5,17 +5,17 @@ import Graphics.Gloss.Data.Color
 
 import Types
 
-initBall :: Ball
-initBall = Ball
-    { bX      = 400
-    , bY      = 300
+initBall :: Float -> Float -> Ball
+initBall w h = Ball
+    { bX      = w / 2
+    , bY      = h / 2
     , bDX     = 0
-    , bDY     = -256
+    , bDY     = 0
     , bRadius = 4
     }
 
-updateBall :: Time -> Ball -> Collision -> Ball
-updateBall dt ball collision =
+updateBall :: Ball -> Collision -> Ball
+updateBall ball collision =
     let (newDx, newDy) =
             case collision of
                 NoCollision ->
@@ -24,8 +24,8 @@ updateBall dt ball collision =
                     )
                 _ -> if cVertical collision then (-dx, dy) else (cVelMod collision + dx, -dy)
     in  ball
-        { bX  = x + (dt * newDx)
-        , bY  = y + (dt * newDy)
+        { bX  = x + newDx
+        , bY  = y + newDy
         , bDX = newDx
         , bDY = newDy
         }
@@ -36,7 +36,7 @@ updateBall dt ball collision =
           dy = bDY ball
 
 drawBall :: Ball -> Picture
-drawBall ball = color (greyN 0.6) $ translate x y $ thickCircle r 2
+drawBall ball = color (greyN 0.6) $ translate x y $ circleSolid r
     where r = bRadius ball
           x = bX ball - (r/2)
           y = bY ball - (r/2)

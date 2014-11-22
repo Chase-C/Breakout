@@ -1,23 +1,20 @@
 module Types where
 
+import Graphics.Gloss.Data.Picture
 import qualified Data.Map.Strict as M
 
 type Time = Float
 
-data Collision = NoCollision
-               | Collision
-    { cBrick    :: !(Int, Int)
-    , cVertical :: !Bool
-    , cVelMod   :: !Float
-    }
-
 data Game = Game
     { gTime     :: !Time
+    , gDims     :: !(Float, Float)
     , gBricks   :: !BrickMap
     , gPaddle   :: !Paddle
     , gBall     :: !Ball
-    , gScore    :: !Float
+    , gScore    :: !Int
     , gLives    :: !Int
+    , gTimers   :: [Timer]
+    , gInsts    :: [Instance]
     }
 
 data BrickMap = BrickMap
@@ -46,4 +43,21 @@ data Ball = Ball
     , bDX       :: !Float
     , bDY       :: !Float
     , bRadius   :: !Float
+    }
+
+data Collision = NoCollision
+               | Collision
+    { cBrick    :: !(Int, Int)
+    , cVertical :: !Bool
+    , cVelMod   :: !Float
+    }
+
+data Timer = Timer
+    { tSeconds  :: !Float
+    , tFunc     :: Game -> Game
+    }
+
+data Instance = Instance
+    { iSeconds  :: !Float
+    , iFunc     :: Game -> Picture
     }

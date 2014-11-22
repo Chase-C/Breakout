@@ -1,5 +1,7 @@
 module Collision where
 
+import System.IO
+import System.IO.Unsafe
 import Data.Maybe
 import qualified Data.Map.Strict as M
 
@@ -10,7 +12,7 @@ checkPaddleCollision paddle ball
     | collision = Collision
                   { cBrick    = (0, 0)
                   , cVertical = False
-                  , cVelMod   = (dx - (bDX ball)) / 2
+                  , cVelMod   = (dx - bDX ball) / 2
                   }
     | otherwise = NoCollision
     where (x1, y1, dy, r)    = (bX ball, bY ball, bDY ball, bRadius ball)
@@ -25,21 +27,21 @@ checkPaddleCollision paddle ball
 checkBricksCollision :: BrickMap -> Ball -> Collision
 checkBricksCollision brickMap ball
     | validBucket =
-        let baseX = (bmX brickMap) + ((fromIntegral xBucket) * width)
-            baseY = (bmY brickMap) + ((fromIntegral yBucket) * height)
-            relX2 = (bX ball) - baseX
-            relY2 = (bY ball) - baseY
-            m     = (bDY ball) / (bDX ball)
+        let baseX = bmX brickMap + (fromIntegral xBucket * width)
+            baseY = bmY brickMap + (fromIntegral yBucket * height)
+            relX2 = bX ball - baseX
+            relY2 = bY ball - baseY
+            m     = bDY ball / bDX ball
             b     = relY2 - (m * relX2)
-            yInt  = (m * (if (bDX ball) > 0 then baseX else baseX + width)) + b
+            yInt  = (m * (if bDX ball > 0 then 0 else width)) + b
         in  Collision
             { cBrick    = (xBucket + 1, yBucket + 1)
             , cVertical = (yInt > 0) && (yInt < bmHeight brickMap)
             , cVelMod   = 0
             }
     | otherwise   = NoCollision
-    where relX        = (bX ball) - (bmX brickMap)
-          relY        = (bY ball) - (bmY brickMap)
+    where relX        = bX ball - bmX brickMap
+          relY        = bY ball - bmY brickMap
           width       = bmWidth  brickMap + bmSep brickMap
           height      = bmHeight brickMap + bmSep brickMap
           xBucket     = floor $ relX / width
