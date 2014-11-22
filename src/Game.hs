@@ -74,7 +74,6 @@ update dt oldGame
         let (w, h) = gDims oldGame
         in  oldGame
             { gBricks = if loseCond then gBricks oldGame else initBrickMap 11 5 25 64 20 w h
-            , gPaddle = initPaddle w
             , gBall   = initBall   w h
             , gScore  = if gameOver then 0 else gScore oldGame
             , gLives  = if gameOver then 3 else gLives oldGame - if loseCond then 1 else 0
